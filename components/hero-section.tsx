@@ -1,9 +1,35 @@
+'use client';
+
 import { Button } from "@/components/ui/button"
 import { ChevronDown } from "lucide-react"
-import { getHeroEntry } from "@/lib/contentstack"
+import { useEffect, useState } from "react";
+import { getHeroSection } from "@/lib/contentstack";
 
-export async function HeroSection() {
-  const { title, subtitle, cta_button_text } = await getHeroEntry()
+export function HeroSection() {
+  const [heroData, setHeroData] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchHero() {
+      try {
+        const data = await getHeroSection();
+        setHeroData(data);
+      } catch (error) {
+        console.error("Failed to fetch hero data:", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchHero();
+  }, []);
+
+  const fallbackData = {
+    title: "Elevate your expectations.",
+    subtitle: "Transform your business with innovative solutions that exceed industry standards and deliver exceptional results.",
+    cta_button_text: "Discover Our Services",
+  };
+
+  const displayData = heroData || fallbackData;
 
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
@@ -26,13 +52,13 @@ export async function HeroSection() {
       {/* Content */}
       <div className="relative z-10 text-center px-4 max-w-4xl mx-auto">
         <h1 className="font-heading text-5xl md:text-7xl font-bold text-white mb-6 leading-tight">
-          {title}
+          {loading ? "Loading..." : displayData.title}
         </h1>
         <p className="text-xl md:text-2xl text-white/90 mb-8 max-w-2xl mx-auto leading-relaxed">
-          {subtitle}
+          {loading ? "Loading content..." : displayData.subtitle}
         </p>
-        <Button size="lg" className="bg-accent hover:bg-accent/90 text-accent-foreground text-lg px-8 py-4">
-          {cta_button_text}
+        <Button size="lg" className="bg-accent hover:bg-accent/90 text-accent-foreground text-lg px-8 py-4" disabled={loading}>
+          {loading ? "Loading..." : displayData.cta_button_text}
         </Button>
       </div>
 
@@ -49,5 +75,5 @@ export async function HeroSection() {
         }
       `}</style>
     </section>
-  )
+  );
 }
