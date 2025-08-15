@@ -1,9 +1,10 @@
-"use client"
-
 import { Button } from "@/components/ui/button"
 import { ChevronDown } from "lucide-react"
+import { getHeroEntry } from "@/lib/contentstack"
 
-export function HeroSection() {
+export async function HeroSection() {
+  const { title, subtitle, cta_button_text } = await getHeroEntry()
+
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
       {/* Background with particle effect */}
@@ -25,14 +26,13 @@ export function HeroSection() {
       {/* Content */}
       <div className="relative z-10 text-center px-4 max-w-4xl mx-auto">
         <h1 className="font-heading text-5xl md:text-7xl font-bold text-white mb-6 leading-tight">
-          Elevate your expectations.
+          {title}
         </h1>
         <p className="text-xl md:text-2xl text-white/90 mb-8 max-w-2xl mx-auto leading-relaxed">
-          Transform your business with innovative solutions that exceed industry standards and deliver exceptional
-          results.
+          {subtitle}
         </p>
         <Button size="lg" className="bg-accent hover:bg-accent/90 text-accent-foreground text-lg px-8 py-4">
-          Discover Our Services
+          {cta_button_text}
         </Button>
       </div>
 
